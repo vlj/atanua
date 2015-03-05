@@ -27,7 +27,7 @@ class AudioChip : public Chip
 {
     Pin mPinA[8]; 
 
-    int mTexture;
+    struct SDL_Surface *mTexture;
 
 public:
     AudioChip(); // Ctor

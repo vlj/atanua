@@ -26,7 +26,7 @@ distribution.
 class LogicProbe : public Chip
 {
     Pin mInputPin[8];  
-    int mTexture;
+    struct SDL_Surface *mTexture;
     unsigned int mData[8][1000];
     int mPlayhead;
     //float mVtxArray[2000];

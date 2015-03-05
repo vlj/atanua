@@ -31,7 +31,7 @@ class SERChip : public Chip
     Pin mOutputPinA; // Output A pin for this chip
     Pin mOutputPinB; // Output B pin for this chip (negated)
     int mOldState;
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     SERChip(); // Ctor
 

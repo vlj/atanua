@@ -27,7 +27,7 @@ class ButtonChip : public Chip
 {
     int mCharacter; // Which character this button is bound to
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mPressed; // is this button pressed with mouse?
 public:
     ButtonChip(int aCharacter); // Ctor

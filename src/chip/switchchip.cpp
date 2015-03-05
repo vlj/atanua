@@ -22,6 +22,7 @@ distribution.
 */
 #include "atanua.h"
 #include "switchchip.h"
+#include <cassert>
 
 SwitchChip::SwitchChip(int aCharacter)
 {
@@ -54,8 +55,8 @@ void SwitchChip::render(int aChipId)
     {
         mSwitchedOn = !mSwitchedOn;
     }
-
-    glBindTexture(GL_TEXTURE_2D, mTexture);
+  assert(0 && "Unimplemented");
+    /*glBindTexture(GL_TEXTURE_2D, mTexture);
     glEnable(GL_TEXTURE_2D);
     glColor4f(1, 1, 1, 1);
     glBegin(GL_TRIANGLE_STRIP);
@@ -68,7 +69,7 @@ void SwitchChip::render(int aChipId)
       glTexCoord2f(1, mSwitchedOn);
       glVertex2f(mX + mW, mY + mH - 0.5);
     glEnd();
-    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);*/
 
     if (mCharacter == 32)
 	{

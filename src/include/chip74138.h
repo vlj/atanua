@@ -28,7 +28,7 @@ class Chip74138 : public Chip
     Pin mInputPinA[3]; // Input pin A for this chip
     Pin mInputPinB[3]; // Input pin B for this chip
     Pin mOutputPin[8]; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74138(); // Ctor
 

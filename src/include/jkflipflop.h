@@ -32,7 +32,7 @@ class JKFlipFlop : public Chip
     Pin mInputPinR;
     Pin mOutputPinA; // Output A pin for this chip
     Pin mOutputPinB; // Output B pin for this chip (negated)
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mState;
     int mClock;
 public:

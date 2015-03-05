@@ -27,7 +27,7 @@ class StepperMotor : public Chip
 {
     Pin mCoilPin[4]; 
 
-    int mTexture;
+    struct SDL_Surface *mTexture;
 
     int mCurrentBits;
     int mCurrentAngle;

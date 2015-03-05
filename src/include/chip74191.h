@@ -34,7 +34,7 @@ class Chip74191 : public Chip
     Pin mRippleClockPin;
     Pin mClockPin;
     int mClock;
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74191(); // Ctor
 

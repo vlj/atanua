@@ -28,7 +28,7 @@ class Chip7486 : public Chip
     Pin mInputPinA[4]; // Input pin A for this chip
     Pin mInputPinB[4]; // Input pin B for this chip
     Pin mOutputPin[4]; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip7486(); // Ctor
 

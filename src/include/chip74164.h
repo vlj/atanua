@@ -29,7 +29,7 @@ class Chip74164 : public Chip
     Pin mClearPin;     // Reset pin 
     Pin mClockPin;     // Clock pin 
     Pin mOutputPin[8]; // Output pin 
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mOldClock;
 public:
     Chip74164(); // Ctor

@@ -27,7 +27,7 @@ class NOR8Chip : public Chip
 {
     Pin mInputPin[8]; // Input pins for this chip
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     NOR8Chip(int aUS); // Ctor
 

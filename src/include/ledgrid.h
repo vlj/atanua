@@ -31,8 +31,8 @@ class LedGrid : public Chip
 	int mSize;        // Grid size (n x n)
     Pin *mInputPin;   // Chip's input pins
 	char **mPinDescription;
-    int mBaseTexture; // Chip's base texture
-	int mLitTexture;  // Chip's lit texture
+    struct SDL_Surface *mBaseTexture; // Chip's base texture
+    struct SDL_Surface *mLitTexture;  // Chip's lit texture
     int mInverse;     // use inverse logic
 	SlidingAverage *mAvg;
 public:

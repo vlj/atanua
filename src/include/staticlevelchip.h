@@ -27,7 +27,7 @@ class StaticLevelChip : public Chip
 {
     int mLevel;     // Should this pin be ground or vcc..
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     StaticLevelChip(int aLevel); // Ctor
 

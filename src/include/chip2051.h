@@ -40,7 +40,7 @@ class Chip2051 : public Chip
     unsigned char mLowerMem[128];
     unsigned char mSFR[128];
 
-    int mTexture;
+    struct SDL_Surface *mTexture;
 
     int mClock;
     int mResetCounter;

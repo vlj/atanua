@@ -32,7 +32,7 @@ class Chip74574 : public Chip
 
     int mState;
     int mClock;
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74574(); // Ctor
 

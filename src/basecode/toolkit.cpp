@@ -35,7 +35,7 @@ Particle particle[MAX_PARTICLES];
 struct texpair
 {
     const char *mFilename;
-    GLuint mHandle;
+    SDL_Surface *mHandle;
     int mClamp;
 };
 
@@ -115,6 +115,7 @@ void set2d()
     glLoadIdentity();
 }
 
+static SDL_Surface *ScreenSurface;
 
 void initvideo(const AtanuaConfig& gConfig)
 {
@@ -131,34 +132,24 @@ void initvideo(const AtanuaConfig& gConfig)
     }
 
     bpp = info->vfmt->BitsPerPixel;
-    flags = SDL_OPENGL | SDL_RESIZABLE;
-
-    if (SDL_SetVideoMode(gScreenWidth, gScreenHeight, bpp, flags) == 0) 
+    flags = SDL_HWSURFACE | SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_RESIZABLE;
+    ScreenSurface = SDL_SetVideoMode(gScreenWidth, gScreenHeight, bpp, flags);
+    if (ScreenSurface == NULL)
     {
         fprintf( stderr, "Video mode set failed: %s\n", SDL_GetError());
         SDL_Quit();
         exit(0);
     }
-
-    glViewport( 0, 0, gScreenWidth, gScreenHeight );
-
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
-
-    gluOrtho2D(0,gScreenWidth,gScreenHeight,0);
-
-    if (gConfig.mUseBlending)
-        glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
-    reload_textures();    
+//    SDL_LockSurface(ScreenSurface);
+//    memset(ScreenSurface->pixels, -1, ScreenSurface->w * ScreenSurface->h * 4);
+//    SDL_UnlockSurface(ScreenSurface);
+//    SDL_Flip(ScreenSurface);
 }
 
 
-static void do_loadtexture(const char * aFilename, int clamp = 1)
+static void do_loadtexture(const char * aFilename, SDL_Surface*& Surface,
+                           bool new_surface, int clamp = 1)
 {
-    int i, j;
-
     // Load texture using stb
 	int x, y, n;
 	unsigned char *data = stbi_load(aFilename, &x, &y, &n, 4);
@@ -176,9 +167,9 @@ static void do_loadtexture(const char * aFilename, int clamp = 1)
     memset(mip, 0, w * h * 4);
 
     // mark all pixels with alpha = 0 to black
-    for (i = 0; i < h; i++)
+    for (int i = 0; i < h; i++)
     {
-        for (j = 0; j < w; j++)
+        for (int j = 0; j < w; j++)
         {
             if ((src[i * w + j] & 0xff000000) == 0)
                 src[i * w + j] = 0;
@@ -186,114 +177,13 @@ static void do_loadtexture(const char * aFilename, int clamp = 1)
     }
 
 
-    // Tell OpenGL to read the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)src);
+    if (new_surface)
+      Surface = SDL_CreateRGBSurface(0, w, h, 32, 0xFF << 6, 0xFF << 4, 0xFF << 2, 0xFF);
 
-    if (mip)
-    {
-        // precalculate summed area tables
-        // it's a box filter, which isn't very good, but at least it's fast =)
-        int ra = 0, ga = 0, ba = 0, aa = 0;
-        int i, j, c;
-        unsigned int * rbuf = mip + (w * h * 1);
-        unsigned int * gbuf = mip + (w * h * 2);
-        unsigned int * bbuf = mip + (w * h * 3);
-        unsigned int * abuf = mip + (w * h * 4);
-        
-        for (j = 0, c = 0; j < h; j++)
-        {
-            ra = ga = ba = aa = 0;
-            for (i = 0; i < w; i++, c++)
-            {
-                ra += (src[c] >>  0) & 0xff;
-                ga += (src[c] >>  8) & 0xff;
-                ba += (src[c] >> 16) & 0xff;
-                aa += (src[c] >> 24) & 0xff;
-                if (j == 0)
-                {
-                    rbuf[c] = ra;
-                    gbuf[c] = ga;
-                    bbuf[c] = ba;
-                    abuf[c] = aa;
-                }
-                else
-                {
-                    rbuf[c] = ra + rbuf[c - w];
-                    gbuf[c] = ga + gbuf[c - w];
-                    bbuf[c] = ba + bbuf[c - w];
-                    abuf[c] = aa + abuf[c - w];
-                }
-            }
-        }
-
-        while (w > 1 || h > 1)
-        {
-            l++;
-            w /= 2;
-            h /= 2;
-            if (w == 0) w = 1;
-            if (h == 0) h = 1;
-
-            int dw = x / w;
-            int dh = y / h;
-
-            for (j = 0, c = 0; j < h; j++)
-            {
-                for (i = 0; i < w; i++, c++)
-                {
-                    int x1 = i * dw;
-                    int y1 = j * dh;
-                    int x2 = x1 + dw - 1;
-                    int y2 = y1 + dh - 1;
-                    int div = (x2 - x1) * (y2 - y1);
-                    y1 *= x;
-                    y2 *= x;
-                    int r = rbuf[y2 + x2] - rbuf[y1 + x2] - rbuf[y2 + x1] + rbuf[y1 + x1];
-                    int g = gbuf[y2 + x2] - gbuf[y1 + x2] - gbuf[y2 + x1] + gbuf[y1 + x1];
-                    int b = bbuf[y2 + x2] - bbuf[y1 + x2] - bbuf[y2 + x1] + bbuf[y1 + x1];
-                    int a = abuf[y2 + x2] - abuf[y1 + x2] - abuf[y2 + x1] + abuf[y1 + x1];
-
-                    r /= div;
-                    g /= div;
-                    b /= div;
-                    a /= div;
-
-                    if (a == 0)
-                        mip[c] = 0;
-                    else
-                        mip[c] = ((r & 0xff) <<  0) | 
-                                 ((g & 0xff) <<  8) | 
-                                 ((b & 0xff) << 16) | 
-                                 ((a & 0xff) << 24); 
-                }
-            }
-            glTexImage2D(GL_TEXTURE_2D, l, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)mip);
-        }
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR); // Linear Filtering
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // Linear Filtering
-        delete[] mip;
-    }
-    else
-    {
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // Linear Filtering
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // Linear Filtering
-    }
+    memcpy(Surface->pixels, src, w * h * 4);
 
     // and cleanup.
 	stbi_image_free(data);
-
-    if (clamp)
-    {
-        // Set up texture parameters
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    }
-    else
-    {
-        // Set up texture parameters
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
 }
 
 char * mystrdup(const char *aString)
@@ -305,23 +195,18 @@ char * mystrdup(const char *aString)
 	return d;
 }
 
-GLuint load_texture(const char * aFilename, int clamp)
+SDL_Surface* load_texture(const char * aFilename, int clamp)
 {
     // First check if we have loaded this texture already
-    int i;
-    for (i = 0; i < gTextureStoreSize; i++)
+    for (int i = 0; i < gTextureStoreSize; i++)
     {
         if (stricmp(gTextureStore[i].mFilename, aFilename) == 0)
             return gTextureStore[i].mHandle;
     }
 
-    // Create OpenGL texture handle and bind it to use
+    SDL_Surface *new_surface;
 
-    GLuint texname;
-    glGenTextures(1,&texname);
-    glBindTexture(GL_TEXTURE_2D,texname);
-
-    do_loadtexture(aFilename, clamp);
+    do_loadtexture(aFilename, new_surface, true, clamp);
 
     gTextureStoreSize++;
 
@@ -330,21 +215,19 @@ GLuint load_texture(const char * aFilename, int clamp)
 	{
 	    gTextureStore = t;
 		gTextureStore[gTextureStoreSize-1].mFilename = mystrdup(aFilename);
-		gTextureStore[gTextureStoreSize-1].mHandle = texname;
+		gTextureStore[gTextureStoreSize-1].mHandle = new_surface;
 		gTextureStore[gTextureStoreSize-1].mClamp = clamp;
 	}
 
-    return texname;
+    return new_surface;
 }
 
 void reload_textures()
 {
     // bind the textures to the same texture names as the last time.
-    int i;
-    for (i = 0; i < gTextureStoreSize; i++)
+    for (int i = 0; i < gTextureStoreSize; i++)
     {
-        glBindTexture(GL_TEXTURE_2D, gTextureStore[i].mHandle);
-        do_loadtexture(gTextureStore[i].mFilename, gTextureStore[i].mClamp);
+        do_loadtexture(gTextureStore[i].mFilename, gTextureStore[i].mHandle, gTextureStore[i].mClamp);
     }
 }
 
@@ -357,7 +240,7 @@ SDL_Cursor *load_cursor(const char *aFilename, int hotx, int hoty)
 	int ix, iy, n;
 	unsigned char *imgdata = stbi_load(aFilename, &ix, &iy, &n, 4);
     
-    if (data == NULL)
+    if (imgdata == NULL)
         return NULL;
 
     if (ix > 32 || iy > 32)
@@ -466,21 +349,24 @@ int rect_line_collide(float x0a, float y0a, float x1a, float y1a,
 
 void drawrect(float x, float y, float w, float h, int color)
 {
-    glColor4f(((color >> 16) & 0xff) / 256.0f,
-              ((color >> 8) & 0xff) / 256.0f,
-              ((color >> 0) & 0xff) / 256.0f,
-              ((color >> 24) & 0xff) / 256.0f);
-    glBegin(GL_TRIANGLE_STRIP);
-      glVertex2f(x,y);
-      glVertex2f(x,y+h);
-      glVertex2f(x+w,y);
-      glVertex2f(x+w,y+h);
-    glEnd();
+  SDL_Rect dst;
+  dst.x = x;
+  dst.y = y;
+  dst.w = w;
+  dst.h = h;
+  SDL_FillRect(ScreenSurface, &dst, color);
 }
 
-void drawtexturedrect(int tex, float x, float y, float w, float h, int color)
+// For some reason using const SDL_Surface * triggers a link error
+void drawtexturedrect(const SDL_Surface *, float x, float y, float w, float h, int color)
 {
-    glBindTexture(GL_TEXTURE_2D, tex);
+  SDL_Rect dst;
+  dst.x = x;
+  dst.y = y;
+  dst.w = w;
+  dst.h = h;
+  SDL_FillRect(ScreenSurface, &dst, color);
+/*    glBindTexture(GL_TEXTURE_2D, tex);
     glEnable(GL_TEXTURE_2D);
     glColor4f(((color >> 16) & 0xff) / 256.0f,
               ((color >> 8) & 0xff) / 256.0f,
@@ -496,7 +382,7 @@ void drawtexturedrect(int tex, float x, float y, float w, float h, int color)
       glTexCoord2f(1,1);
       glVertex2f(x+w,y+h);
     glEnd();
-    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);*/
 }
 
 void quickfont_drawchar(int ch, float x, float y, float w, float h)
@@ -975,4 +861,5 @@ void imgui_finish()
         gUIState.lasthotitem = gUIState.hotitem;
         gUIState.lasthottick = SDL_GetTicks();
     }
+    SDL_Flip(ScreenSurface);
 }

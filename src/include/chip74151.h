@@ -29,7 +29,7 @@ class Chip74151 : public Chip
     Pin mInputPinG[3];
     Pin mOutputPin[2];
     Pin mStrobePin;
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74151(); // Ctor
 

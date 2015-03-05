@@ -28,7 +28,7 @@ class DxChip : public Chip
     Pin mInputPin[3];
     Pin mEnablePin[3];
     Pin mOutputPin[8]; 
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     DxChip(); // Ctor
 

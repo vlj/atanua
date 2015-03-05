@@ -30,7 +30,7 @@ class Chip74245 : public Chip
     Pin mEnablePin;
     Pin mDirectionPin;
 
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74245(); // Ctor
 

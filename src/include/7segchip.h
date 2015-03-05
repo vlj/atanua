@@ -29,7 +29,7 @@ class SevenSegChip : public Chip
 {
     int mColor;       // Color for the LED. 24bit value
     Pin mInputPin[8]; // Chip's input pins
-    int mTexture[9];  // Chip's textures
+    struct SDL_Surface *mTexture[9];  // Chip's textures
     int mInverse;     // use inverse logic
 	SlidingAverage *mAvg;
 public:

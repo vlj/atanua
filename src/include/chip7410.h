@@ -29,7 +29,7 @@ class Chip7410 : public Chip
     Pin mInputPinB[3]; // Input pin B for this chip
     Pin mInputPinC[3]; // Input pin C for this chip
     Pin mOutputPin[3]; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip7410(); // Ctor
 

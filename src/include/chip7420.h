@@ -30,7 +30,7 @@ class Chip7420 : public Chip
     Pin mInputPinC[2]; // Input pin C for this chip
     Pin mInputPinD[2]; // Input pin D for this chip
     Pin mOutputPin[2]; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip7420(); // Ctor
 

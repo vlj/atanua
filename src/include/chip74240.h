@@ -29,7 +29,7 @@ class Chip74240 : public Chip
     Pin mOutputPin[8];
     Pin mOutputControlPin[2];
 
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74240(); // Ctor
 

@@ -35,7 +35,7 @@ class Chip74192 : public Chip
     Pin mBorrow;
     Pin mLoad;
     Pin mClear;
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mValue;
 public:
     Chip74192(); // Ctor

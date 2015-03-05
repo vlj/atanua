@@ -29,7 +29,7 @@ class JKChip : public Chip
     Pin mInputPinB; // Input pin B for this chip
     Pin mOutputPinA; // Output A pin for this chip
     Pin mOutputPinB; // Output B pin for this chip (negated)
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mOldState;
 public:
     JKChip(); // Ctor

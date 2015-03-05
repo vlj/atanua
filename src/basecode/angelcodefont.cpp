@@ -25,6 +25,7 @@ distribution.
 #include "atanua.h"
 #include "toolkit.h"
 #include "fileutils.h"
+#include <cassert>
 
 void ACFontInfoBlock::load(File * f)
 {
@@ -87,7 +88,7 @@ void ACFontPagesBlock::load(File * f)
     pages = blocksize / l;
     int i;
     name = new char*[pages];
-    glhandle = new int[pages];
+    glhandle = new SDL_Surface*[pages];
     for (i = 0; i < pages; i++)
     {
         name[i] = new char[l];
@@ -294,7 +295,8 @@ void ACFont::drawstring(const char * string, float x, float y, int color, float 
         return;
 
     float xofs, yofs;
-    glEnable(GL_TEXTURE_2D);
+    assert(0 && "unimplemented");
+/*    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, pages.glhandle[0]);
     if (gConfig.mUseBlending)
     {
@@ -306,7 +308,7 @@ void ACFont::drawstring(const char * string, float x, float y, int color, float 
     else
     {
         glColor4f(1,1,1,1);
-    }
+    }*/
 
 
     if (!gConfig.mUseOldFontSystem)
@@ -400,7 +402,7 @@ void ACFont::drawstring(const char * string, float x, float y, int color, float 
                     if (curr->page != currentpage)
                     {
                         currentpage = curr->page;
-                        glBindTexture(GL_TEXTURE_2D, pages.glhandle[currentpage]);
+//                        glBindTexture(GL_TEXTURE_2D, pages.glhandle[currentpage]);
                     }
 
                     lru->mTexcoords[p] = curr->x / (float)common.scaleW;
@@ -541,7 +543,7 @@ void ACFont::drawstring(const char * string, float x, float y, int color, float 
                 if (curr->page != currentpage)
                 {
                     currentpage = curr->page;
-                    glBindTexture(GL_TEXTURE_2D, pages.glhandle[currentpage]);
+//                    glBindTexture(GL_TEXTURE_2D, pages.glhandle[currentpage]);
                 }
 
                 glBegin(GL_TRIANGLE_STRIP);

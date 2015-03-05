@@ -29,7 +29,7 @@ class Chip7485 : public Chip
     Pin mInputPinB[4];
     Pin mCascadingInputPin[3];
     Pin mOutputPin[3];
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip7485(); // Ctor
 

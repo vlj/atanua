@@ -33,7 +33,7 @@ class Chip74163 : public Chip
     Pin mClockPin;
     Pin mInputPin[4];
     Pin mEnablePPin;
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mOldClock;
     int mValue;
 public:

@@ -27,7 +27,7 @@ class Chip7404 : public Chip
 {
     Pin mInputPin[6]; // Input pin for this chip
     Pin mOutputPin[6]; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip7404(); // Ctor
 

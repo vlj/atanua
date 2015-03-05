@@ -29,8 +29,8 @@ class LEDChip : public Chip
 {
     int mColor;     // Color for the LED. 24bit value
     Pin mInputPin;  // Chip's input pin
-    int mBaseTexture;
-    int mFlareTexture;
+    struct SDL_Surface *mBaseTexture;
+    struct SDL_Surface *mFlareTexture;
     int mInverse;
 	SlidingAverage *mAvg;
 

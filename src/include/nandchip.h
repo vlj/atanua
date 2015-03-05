@@ -28,7 +28,7 @@ class NANDChip : public Chip
     Pin mInputPinA; // Input pin A for this chip
     Pin mInputPinB; // Input pin B for this chip
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     NANDChip(int aUS); // Ctor
 

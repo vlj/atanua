@@ -81,7 +81,7 @@ class ACFontPagesBlock
 {
 public:
     int pages;
-    int *glhandle;
+    struct SDL_Surface **glhandle;
     char **name;
     void load(File * f);
     ~ACFontPagesBlock();

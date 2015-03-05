@@ -27,7 +27,7 @@ class NOTChip : public Chip
 {
     Pin mInputPin;  // Input pin for this chip
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     NOTChip(int aUS); // Ctor
 

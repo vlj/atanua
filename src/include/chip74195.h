@@ -33,7 +33,7 @@ class Chip74195 : public Chip
     Pin mInputPinJ;
     Pin mInputPinK;
     int mClock;
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74195(); // Ctor
 

@@ -24,6 +24,7 @@ distribution.
 #include "atanua_internal.h"
 #include "pluginchip.h"
 #include "fileutils.h"
+#include <cassert>
 
 PluginChip::PluginChip(DLLHANDLETYPE aDllHandle, const char *aChipname)
 {
@@ -102,7 +103,8 @@ void PluginChip::render(int aChipId)
     glColor4f(1,1,1,1);
     if (mTexture)
     {
-        glBindTexture(GL_TEXTURE_2D, mTexture);
+      assert(0 && "unimplemented");
+//        glBindTexture(GL_TEXTURE_2D, mTexture);
         glEnable(GL_TEXTURE_2D);
     }
 

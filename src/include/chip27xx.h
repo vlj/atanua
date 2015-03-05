@@ -28,7 +28,7 @@ class Chip27xx : public Chip
     Pin mAddressPin[12];
     Pin mEnablePin[2];
     Pin mOutputPin[8];
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mType;
     int mMemSize;
     unsigned char *mMemory;

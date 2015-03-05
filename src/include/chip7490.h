@@ -29,7 +29,7 @@ class Chip7490 : public Chip
     Pin mInputPinB;
     Pin mOutputPin[4];
     Pin mResetPin[4];
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mClockA, mClockB;
 public:
     Chip7490(); // Ctor

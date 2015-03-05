@@ -33,7 +33,7 @@ class Chip74165 : public Chip
     Pin mNegOutput;
     int mValue;  
     int mLastClock;
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74165(); // Ctor
 

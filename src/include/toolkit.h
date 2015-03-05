@@ -196,11 +196,11 @@ void render_perfcounters(ACFont &font);
 void render_perfcounters(ACFont *font);
 void render_perfcounters(int tex_font);
 
-GLuint load_texture(const char * aFilename, int clamp = 1);
+SDL_Surface *load_texture(const char * aFilename, int clamp = 1);
 void reload_textures();
 SDL_Cursor *load_cursor(const char *aFilename, int hotx, int hoty);
 void drawrect(float x, float y, float w, float h, int color);
-void drawtexturedrect(int tex, float x, float y, float w, float h, int color);
+void drawtexturedrect(const SDL_Surface *, float x, float y, float w, float h, int color);
 void quickfont_drawchar(int ch, float x, float y, float w, float h);
 void quickfont_drawstring(int tex, char * string, float x, float y, int color, float alpha, float size = 1.0);
 void drawsprite(int tex, float x, float y, float w, float h, float alpha = 0.95f);

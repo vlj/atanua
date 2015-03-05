@@ -31,7 +31,7 @@ class Chip7474 : public Chip
     Pin mPRPin[2];
     Pin mOutputPinA[2];
     Pin mOutputPinB[2];
-    int mTexture;
+    struct SDL_Surface *mTexture;
     int mClock[2];
 public:
     Chip7474(); // Ctor

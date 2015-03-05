@@ -36,7 +36,7 @@ class Chip309 : public Chip
     int mVisibleData;
 	SlidingAverage *mAvg;
     
-    int mTexture[9];  // Chip's textures
+    struct SDL_Surface *mTexture[9];  // Chip's textures
 public:
     Chip309();
 	~Chip309();

@@ -23,11 +23,13 @@ distribution.
 #ifndef AND8CHIP_H
 #define AND8CHIP_H
 
+#include <SDL/SDL_video.h>
+
 class AND8Chip : public Chip
 {
     Pin mInputPin[8]; // Input pins for this chip
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    SDL_Surface *mTexture;
 public:
     AND8Chip(int aUS); // Ctor
 

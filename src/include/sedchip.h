@@ -27,8 +27,8 @@ class SEDChip : public Chip
 {
     int mColor;  
     Pin mInputPin;
-    int mBaseTexture;
-    int mFlareTexture;
+    struct SDL_Surface *mBaseTexture;
+    struct SDL_Surface *mFlareTexture;
     Particle mParticle[32];
 public:
     SEDChip();

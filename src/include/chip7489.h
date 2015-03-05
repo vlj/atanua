@@ -29,7 +29,7 @@ class Chip7489 : public Chip
     Pin mDataPin[4];
     Pin mSensePin[4];
     Pin mEnablePin[2];
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip7489(); // Ctor
 

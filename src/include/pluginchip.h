@@ -34,7 +34,7 @@ typedef void (ATANUACALL *cleanupproc)(chipinfostruct *aChipInfo);
 
 class PluginChip : public Chip
 {
-    int mTexture;
+    struct SDL_Surface *mTexture;
     chipinfostruct mChipInfo;
     createproc dllcreate;
     updateproc dllupdate;

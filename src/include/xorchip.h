@@ -28,7 +28,7 @@ class XORChip : public Chip
     Pin mInputPinA; // Input pin A for this chip
     Pin mInputPinB; // Input pin B for this chip
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     XORChip(int aUS); // Ctor
 

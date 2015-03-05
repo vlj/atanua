@@ -23,6 +23,7 @@ distribution.
 #include "atanua.h"
 #include "ledgrid.h"
 #include "slidingaverage.h"
+#include <cassert>
 
 LedGrid::LedGrid(int aSize, int aColor, int aInverse)
 {
@@ -76,7 +77,8 @@ void LedGrid::render(int aChipId)
 {
     //drawtexturedrect(mBaseTexture, mX, mY, mW, mH, 0xffffffff); 
 
-    glBindTexture(GL_TEXTURE_2D, mBaseTexture);
+  assert(0 && "Unimplemented");
+    /*glBindTexture(GL_TEXTURE_2D, mBaseTexture);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glEnable(GL_TEXTURE_2D);
@@ -116,7 +118,7 @@ void LedGrid::render(int aChipId)
 			}
 		}
 	}
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);*/
 	
 }
 

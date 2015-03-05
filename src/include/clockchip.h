@@ -31,7 +31,7 @@ class ClockChip : public Chip
 	float mMsBucket;   // Milliseconds since last event
     int mLastState;  // Last state
     Pin mOutputPin;  // Chip's output pin
-    int mTexture;
+    struct SDL_Surface *mTexture;
 	int mNagOnce;
 /*
     float mReqFreq;

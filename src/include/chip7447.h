@@ -30,7 +30,7 @@ class Chip7447 : public Chip
     Pin mLTPin;        // LT - Lamp Test (active low)
     Pin mBIRBOPin;     // BI/RBO Blaking Input / Ripple Blanking Output
     Pin mRBIPin;       // RBI - Ripple Blanking Input
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip7447(); // Ctor
 

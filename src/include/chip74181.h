@@ -35,7 +35,7 @@ class Chip74181 : public Chip
     Pin mCarryGeneratePin;
     Pin mCarryPropagatePin;
     Pin mCarryOutputPin;
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     Chip74181(); // Ctor
 

@@ -29,7 +29,7 @@ class NOR3Chip : public Chip
     Pin mInputPinB; // Input pin B for this chip
     Pin mInputPinC; // Input pin C for this chip
     Pin mOutputPin; // Output pin for this chip
-    int mTexture;
+    struct SDL_Surface *mTexture;
 public:
     NOR3Chip(int aUS); // Ctor
 
