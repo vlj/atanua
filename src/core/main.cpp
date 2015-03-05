@@ -30,6 +30,7 @@ distribution.
 #include "toolkit.h"
 
 #include "stb/stb_image_write.h"
+#include <SDL/SDL_gfxPrimitives.h>
 
 #define C_MENUBG 0xff3f4f4f
 #define C_WIDGETBG 0xff3f5f6f
@@ -550,13 +551,12 @@ static void draw_screen()
     ////////////////////////////////////
 
     if (gBlackBackground)
-		glClearColor(0,0,0,1.0);
-	else
-		glClearColor(0.8,0.8,0.8,1.0);
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        SDL_FillRect(ScreenSurface, 0, SDL_MapRGBA(ScreenSurface->format, 0, 0, 0, 1));
+    else
+        SDL_FillRect(ScreenSurface, 0, SDL_MapRGBA(ScreenSurface->format, 205, 205, 205, 1));
 
-	drawrect(0, 0, gConfig.mToolkitWidth, gScreenHeight, C_MENUBG);
-	drawrect(0, 0, gScreenWidth, 40, C_MENUBG);
+    drawrect(0, 0, gConfig.mToolkitWidth, gScreenHeight, C_MENUBG);
+    drawrect(0, 0, gScreenWidth, 40, C_MENUBG);
 
     imgui_prepare();
 
@@ -618,7 +618,7 @@ static void draw_screen()
 
     imgui_slider(GEN_ID,gConfig.mToolkitWidth-20,40,20,gScreenHeight-40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,((signed)gAvailableChip[gVisibleChiplist].size() * 26) - (gScreenHeight - 40),slidervalue, (gScreenHeight - 40), 26);
 
-	int xofs = 0;
+    int xofs = 0;
 
     if (imgui_button(GEN_ID,fn14,"Base",xofs,0,33,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
@@ -628,7 +628,7 @@ static void draw_screen()
         gVisibleChiplist = 0;
         slidervalue = 0;
     }
-	xofs += 33;
+    xofs += 33;
     if (imgui_button(GEN_ID,fn14,"Chips",xofs,0,33,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         int active = gUIState.kbditem;
@@ -637,7 +637,7 @@ static void draw_screen()
         gVisibleChiplist = 1;
         slidervalue = 0;
     }
-	xofs += 33;
+    xofs += 33;
     if (imgui_button(GEN_ID,fn14,"In",xofs,0,33,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         int active = gUIState.kbditem;
@@ -646,7 +646,7 @@ static void draw_screen()
         gVisibleChiplist = 2;
         slidervalue = 0;
     }
-	xofs += 33;
+    xofs += 33;
     if (imgui_button(GEN_ID,fn14,"Out",xofs,0,33,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         int active = gUIState.kbditem;
@@ -655,7 +655,7 @@ static void draw_screen()
         gVisibleChiplist = 3;
         slidervalue = 0;
     }
-	xofs += 33;
+    xofs += 33;
     if (imgui_button(GEN_ID,fn14,"Misc",xofs,0,33,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         int active = gUIState.kbditem;
@@ -664,38 +664,38 @@ static void draw_screen()
         gVisibleChiplist = 4;
         slidervalue = 0;
     }
-	xofs += 40;
+    xofs += 40;
 
-	xofs += 20;
+    xofs += 20;
 
 
     if (imgui_button(GEN_ID,fn14,"New\nCtrl-N",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         do_resetdialog();
     }
-	xofs += 40;
+    xofs += 40;
     if (imgui_button(GEN_ID,fn14,"Load\nCtrl-L",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         do_loaddialog();
     }
-	xofs += 40;
+    xofs += 40;
     if (imgui_button(GEN_ID,fn14,"Merge\nCtrl-M",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         do_loaddialog(1);
     }
-	xofs += 40;
+    xofs += 40;
     if (imgui_button(GEN_ID,fn14,"Box\nCtrl-B",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         do_loaddialog(2);
     }
-	xofs += 40;
+    xofs += 40;
     if (imgui_button(GEN_ID,fn14,"Save\nCtrl-S",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         do_savedialog();
     }
-	xofs += 40;
+    xofs += 40;
 
-	xofs += 20;
+    xofs += 20;
 
     if (imgui_button(GEN_ID,fn14,"Undo\nCtrl-Z",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
@@ -703,55 +703,55 @@ static void draw_screen()
         do_undo();
         gUIState.kbditem = active;
     }
-	xofs += 40;
+    xofs += 40;
     if (imgui_button(GEN_ID,fn14,"Redo\nCtrl-Y",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         int active = gUIState.kbditem;
         do_redo();
         gUIState.kbditem = active;
     }
-	xofs += 40;
+    xofs += 40;
 
-	xofs += 20;
+    xofs += 20;
 
     if (imgui_button(GEN_ID,fn14,"Home",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         do_home();
     }
-	xofs += 40;
+    xofs += 40;
 
     if (imgui_button(GEN_ID,fn14,"Zoom\next",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         do_zoomext();
     }
-	xofs += 40;
+    xofs += 40;
 
     if (imgui_button(GEN_ID,fn14,gSnap?"Snap\n(on)":"Snap\n(off)",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         gSnap = !gSnap;
     }
-	xofs += 40;
+    xofs += 40;
 
     if (imgui_button(GEN_ID,fn14,gLiveWires?"View\n(live)":"View\n(grey)",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         gLiveWires = !gLiveWires;
-		gBlackBackground ^= gLiveWires;
+        gBlackBackground ^= gLiveWires;
     }
-	xofs += 40;
+    xofs += 40;
     if (imgui_button(GEN_ID,fn14,"PNG it\nCtrl-G",xofs,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         gSavePNG = 1;
     }
-	xofs += 40;
+    xofs += 40;
 
     if (imgui_button(GEN_ID,fn14,"Quit",800-42,0,40,40,C_WIDGETBG,C_WIDGETTHUMB,C_WIDGETHOT,0xff000000))
     {
         if (okcancel("Are you sure you want to exit?\nAny unsaved changes will be lost."))
-		{
+        {
             exit(0);
-		}
+        }
     }
-  
+
     if (gUIState.mousex > gConfig.mToolkitWidth && gUIState.mousey > 40)
     {
         if (gDragMode == DRAGMODE_NONE)
@@ -759,8 +759,8 @@ static void draw_screen()
             // Check for collisions with wires
             for (i = 0; i < (signed)gWire.size(); i++)
             {
-				if (gWire[i]->mBox != 0)
-					continue;
+                if (gWire[i]->mBox != 0)
+                    continue;
                 Pin * a, * b;
                 a = gWire[i]->mFirst;
                 b = gWire[i]->mSecond;
@@ -804,7 +804,7 @@ static void draw_screen()
             for (i = 0; i < (signed)gChip.size(); i++)
             {
                 if (gChip[i]->mBox == 0 &&
-					worldmousex > gChip[i]->mRotatedX &&
+                    worldmousex > gChip[i]->mRotatedX &&
                     worldmousey > gChip[i]->mRotatedY &&
                     worldmousex < gChip[i]->mRotatedX + gChip[i]->mRotatedW &&
                     worldmousey < gChip[i]->mRotatedY + gChip[i]->mRotatedH)
@@ -928,7 +928,7 @@ static void draw_screen()
                     gUIState.mousedowny += movey * gZoomFactor;
                 }
             }
-        }   
+        }
 
         // If nothing is active so far, we're in "move the world" mode
         if (gDragMode == DRAGMODE_NONE && gUIState.activeitem == -1 && gUIState.mousedown)
@@ -981,8 +981,8 @@ static void draw_screen()
             }
             for (i = 0; i < (signed)gWire.size(); i++)            
             {
-				if (gWire[i]->mBox != 0)
-					continue;
+                if (gWire[i]->mBox != 0)
+                    continue;
                 Pin * a, * b;
                 a = gWire[i]->mFirst;
                 b = gWire[i]->mSecond;
@@ -1024,7 +1024,7 @@ static void draw_screen()
                               ((float)gUIState.mousey - (float)gUIState.mousedowny) * ((float)gUIState.mousey - (float)gUIState.mousedowny));
             if (dist > gConfig.mChipCloneDragDistance) 
             {
-				save_undo();
+                save_undo();
                 // clear multiselect if any
                 gMultiSelectChip.clear();
                 gMultiSelectWire.clear();
@@ -1032,9 +1032,9 @@ static void draw_screen()
                 int oldchipid = GET_CHIP_ID(gUIState.activeitem);
                 gNewChip = NULL;
                 for (i = 0; gNewChip == NULL && i < (signed)gChipFactory.size(); i++)
-				{
+                {
                     gNewChip = gChipFactory[i]->build(gChipName[oldchipid]);
-				}
+                }
 
                 if (gNewChip)
                 {
@@ -1044,13 +1044,13 @@ static void draw_screen()
                     gChipName.push_back(gNewChipName);
                     gNewChip->mX = worldmousex - gNewChip->mW / 2;
                     gNewChip->mY = worldmousey - gNewChip->mH / 2;
-					
+
                     gNewChip->rotate(gChip[oldchipid]->mAngleIn90DegreeSteps);
                     gUIState.mousedownx = gUIState.mousex;
                     gUIState.mousedowny = gUIState.mousey;
                     gUIState.mousedownkeymod &= ~gCloneKeyMask; // stop cloning
                     gChip[oldchipid]->clone(gNewChip);
-				
+
 					int i;
 					for (i = 0; i < (signed)gChip.size(); i++)
 					{
@@ -1208,7 +1208,7 @@ static void draw_screen()
         gMultiselectDirty = 0;
     }
 
-	do_build_nets();
+    do_build_nets();
 
     glEnable(GL_SCISSOR_TEST);
     glScissor(gConfig.mToolkitWidth,0,gScreenWidth-gConfig.mToolkitWidth,gScreenHeight-40);
@@ -1219,19 +1219,35 @@ static void draw_screen()
     glTranslatef(gWorldOfsX, gWorldOfsY, 0);
 
     // Draw grid
-	if (gBlackBackground)
-		glColor4f(0.15,0.2,0.15,1);
-	else
-		glColor4f(0.75,0.75,0.75,1);
-    glBegin(GL_LINES);    
     for (i = 0; i < 20; i++)
     {
-            glVertex2f(i * 10, 0);
-            glVertex2f(i * 10, 190);
-            glVertex2f(0     , i * 10);
-            glVertex2f(190   , i * 10);
+        if (gBlackBackground)
+        {
+            lineRGBA(ScreenSurface,
+                     gConfig.mToolkitWidth + (gWorldOfsX + i * 10) * gZoomFactor,
+                     40 + gWorldOfsY * gZoomFactor,
+                     gConfig.mToolkitWidth + (gWorldOfsX + i * 10) * gZoomFactor,
+                     40 + (190 + gWorldOfsY) * gZoomFactor, 51, 38, 51, 255);
+            lineRGBA(ScreenSurface,
+                     gConfig.mToolkitWidth + gWorldOfsX * gZoomFactor,
+                     40 + (i * 10 + gWorldOfsY) * gZoomFactor,
+                     gConfig.mToolkitWidth + (gWorldOfsX + 190) * gZoomFactor,
+                     40 + (i * 10 + gWorldOfsY) * gZoomFactor, 51, 38, 51, 255);
+        }
+        else
+        {
+            lineRGBA(ScreenSurface,
+                     gConfig.mToolkitWidth + (gWorldOfsX + i * 10) * gZoomFactor,
+                     40 + gWorldOfsY * gZoomFactor,
+                     gConfig.mToolkitWidth + (gWorldOfsX + i * 10) * gZoomFactor,
+                     40 + (190 + gWorldOfsY) * gZoomFactor, 51, 38, 51, 255);
+            lineRGBA(ScreenSurface,
+                     gConfig.mToolkitWidth + gWorldOfsX * gZoomFactor,
+                     40 + (i * 10 + gWorldOfsY) * gZoomFactor,
+                     gConfig.mToolkitWidth + (gWorldOfsX + 190) * gZoomFactor,
+                     40 + (i * 10 + gWorldOfsY) * gZoomFactor, 192, 192, 192, 255);
+        }
     }
-    glEnd();
     fn.drawstring(TITLE,0.5,0.5,0xff003f00,1);
     fn.drawstring(gConfig.mUserInfo,0.5,1.5,0xff003f00,1);
     fn.drawstring("http://iki.fi/sol/",0.5,2.5,0xff003f00,0.5);

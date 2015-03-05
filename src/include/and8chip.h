@@ -23,8 +23,6 @@ distribution.
 #ifndef AND8CHIP_H
 #define AND8CHIP_H
 
-#include <SDL/SDL_video.h>
-
 class AND8Chip : public Chip
 {
     Pin mInputPin[8]; // Input pins for this chip

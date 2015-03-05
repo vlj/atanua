@@ -115,7 +115,7 @@ void set2d()
     glLoadIdentity();
 }
 
-static SDL_Surface *ScreenSurface;
+SDL_Surface *ScreenSurface;
 
 void initvideo(const AtanuaConfig& gConfig)
 {
