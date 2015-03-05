@@ -190,7 +190,7 @@ enum keystates
 extern MersenneTwister gVisualRand, gPhysicsRand;
 extern int gScreenWidth, gScreenHeight;
 
-void initvideo(int argc);
+void initvideo(const class AtanuaConfig& gConfig);
 void set2d();
 void render_perfcounters(ACFont &font);
 void render_perfcounters(ACFont *font);

@@ -22,6 +22,7 @@ distribution.
 */
 #include <math.h>
 #include "toolkit.h"
+#include "atanua.h"
 
 #ifdef USE_BASIC_POPUPS
 Popup popup[MAX_POPUPS];
@@ -115,12 +116,11 @@ void set2d()
 }
 
 
-void initvideo(int argc)
+void initvideo(const AtanuaConfig& gConfig)
 {
     const SDL_VideoInfo *info = NULL;
     int bpp = 0;
     int flags = 0;
-
     info = SDL_GetVideoInfo();
 
     if (!info) 
@@ -130,48 +130,8 @@ void initvideo(int argc)
         exit(0);
     }
 
-#ifdef _DEBUG
-    int fsflag = 0;
-#else
-#ifdef FULLSCREEN_BY_DEFAULT
-    int fsflag = 1;
-#else
-    int fsflag = 0;
-#endif
-#endif
-
-    if (argc > 1) fsflag = !fsflag;
-
-    if (fsflag) 
-    {
-        gScreenWidth = info->current_w;
-        gScreenHeight = info->current_h;
-        bpp = info->vfmt->BitsPerPixel;
-        flags = SDL_OPENGL | SDL_FULLSCREEN;
-    }
-    else
-    {
-        if (argc == 0)
-        {
-            // window was resized
-        }
-        else
-        {
-            gScreenWidth = DESIRED_WINDOW_WIDTH;
-            gScreenHeight = DESIRED_WINDOW_HEIGHT;
-        }
-        bpp = info->vfmt->BitsPerPixel;
-        flags = SDL_OPENGL;
-#ifdef RESIZABLE_WINDOW
-        flags |= SDL_RESIZABLE;
-#endif
-    }
-
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    bpp = info->vfmt->BitsPerPixel;
+    flags = SDL_OPENGL | SDL_RESIZABLE;
 
     if (SDL_SetVideoMode(gScreenWidth, gScreenHeight, bpp, flags) == 0) 
     {
@@ -179,28 +139,17 @@ void initvideo(int argc)
         SDL_Quit();
         exit(0);
     }
-   
-#ifdef DESIRED_ASPECT
-    float aspect = DESIRED_ASPECT;
-    if (((float)gScreenWidth / gScreenHeight) > aspect)
-    {
-        float realx = gScreenHeight * aspect;
-        float extrax = gScreenWidth - realx;
 
-        glViewport( extrax / 2, 0, realx, gScreenHeight );
-    }
-    else
-    {
-        float realy = gScreenWidth / aspect;
-        float extray = gScreenHeight - realy;
-
-        glViewport( 0, extray / 2, gScreenWidth, realy );
-    }
-#else
     glViewport( 0, 0, gScreenWidth, gScreenHeight );
-#endif
 
-	set2d();
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity( );
+
+    gluOrtho2D(0,gScreenWidth,gScreenHeight,0);
+
+    if (gConfig.mUseBlending)
+        glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     reload_textures();    
 }

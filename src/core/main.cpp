@@ -27,6 +27,8 @@ distribution.
 #include "basechipfactory.h"
 #include "pluginchipfactory.h"
 
+#include "toolkit.h"
+
 #include "stb/stb_image_write.h"
 
 #define C_MENUBG 0xff3f4f4f
@@ -95,8 +97,6 @@ unsigned char gAudioBuffer[AUDIOBUF_SIZE];
 int gRecordHead = AUDIOBUF_SIZE/2;
 float gPlayHead = 0;
 unsigned char *gAudioOut;
-
-void initvideo();
 
 void handle_key(int keysym, int down)
 {
@@ -301,7 +301,7 @@ void process_events()
         case SDL_VIDEORESIZE:
             gScreenWidth = event.resize.w;
             gScreenHeight = event.resize.h;
-            initvideo();
+            initvideo(gConfig);
             break;
         }
     }
@@ -1624,43 +1624,6 @@ static void draw_screen()
     SDL_GL_SwapBuffers();
 }
 
-void initvideo()
-{
-    const SDL_VideoInfo *info = NULL;
-    int bpp = 0;
-    int flags = 0;
-    info = SDL_GetVideoInfo();
-
-    if (!info) 
-    {
-        fprintf(stderr, "Video query failed: %s\n", SDL_GetError());
-        SDL_Quit();
-        exit(0);
-    }
-
-    bpp = info->vfmt->BitsPerPixel;
-    flags = SDL_OPENGL | SDL_RESIZABLE;
-
-    if (SDL_SetVideoMode(gScreenWidth, gScreenHeight, bpp, flags) == 0) 
-    {
-        fprintf( stderr, "Video mode set failed: %s\n", SDL_GetError());
-        SDL_Quit();
-        exit(0);
-    }
-
-    glViewport( 0, 0, gScreenWidth, gScreenHeight );
-
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
-
-    gluOrtho2D(0,gScreenWidth,gScreenHeight,0);
-
-    if (gConfig.mUseBlending)
-        glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
-    reload_textures();    
-}
 
 void audiomixer(void *userdata, Uint8 *stream, int len)
 {
@@ -1681,7 +1644,6 @@ void audiomixer(void *userdata, Uint8 *stream, int len)
             gPlayHead -= AUDIOBUF_SIZE;
     }
 }
-
 
 int main(int argc, char** args)
 {
@@ -1747,7 +1709,7 @@ int main(int argc, char** args)
     gScreenWidth = gConfig.mWindowWidth;
     gScreenHeight = gConfig.mWindowHeight;
 
-    initvideo();
+    initvideo(gConfig);
 
     {
         char temp[256];
