@@ -116,6 +116,8 @@ void set2d()
 }
 
 SDL_Surface *ScreenSurface;
+float TranslateX, TranslateY;
+float ScaleX, ScaleY;
 
 void initvideo(const AtanuaConfig& gConfig)
 {
@@ -350,10 +352,10 @@ int rect_line_collide(float x0a, float y0a, float x1a, float y1a,
 void drawrect(float x, float y, float w, float h, int color)
 {
   SDL_Rect dst;
-  dst.x = x;
-  dst.y = y;
-  dst.w = w;
-  dst.h = h;
+  dst.x = x * ScaleX + TranslateX;
+  dst.y = y * ScaleY + TranslateY;
+  dst.w = w * ScaleX;
+  dst.h = h * ScaleY;
   SDL_FillRect(ScreenSurface, &dst, color);
 }
 
@@ -361,10 +363,10 @@ void drawrect(float x, float y, float w, float h, int color)
 void drawtexturedrect(const SDL_Surface *surface, float x, float y, float w, float h, int color)
 {
   SDL_Rect dst;
-  dst.x = x;
-  dst.y = y;
-  dst.w = w;
-  dst.h = h;
+  dst.x = x * ScaleX + TranslateX;
+  dst.y = y * ScaleY + TranslateY;
+  dst.w = w * ScaleX;
+  dst.h = h * ScaleY;
   SDL_BlitSurface(const_cast<SDL_Surface *>(surface), 0, ScreenSurface, &dst);
 }
 

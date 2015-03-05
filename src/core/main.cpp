@@ -555,6 +555,9 @@ static void draw_screen()
     else
         SDL_FillRect(ScreenSurface, 0, SDL_MapRGBA(ScreenSurface->format, 205, 205, 205, 1));
 
+    TranslateX = TranslateY = 0.;
+    ScaleX = ScaleY = 1.;
+
     drawrect(0, 0, gConfig.mToolkitWidth, gScreenHeight, C_MENUBG);
     drawrect(0, 0, gScreenWidth, 40, C_MENUBG);
 
@@ -1214,9 +1217,8 @@ static void draw_screen()
     glScissor(gConfig.mToolkitWidth,0,gScreenWidth-gConfig.mToolkitWidth,gScreenHeight-40);
 
     glPushMatrix();
-    glTranslatef(gConfig.mToolkitWidth, 40, 0);
-    glScalef(gZoomFactor, gZoomFactor, 1);
-    glTranslatef(gWorldOfsX, gWorldOfsY, 0);
+    TranslateX = gConfig.mToolkitWidth + gZoomFactor * gWorldOfsX;
+    TranslateY = 40 + gZoomFactor * gWorldOfsY;
 
     // Draw grid
     for (i = 0; i < 20; i++)
@@ -1301,14 +1303,16 @@ static void draw_screen()
 
     for (i = 0; i < (signed)gChip.size(); i++)
     {
-		// Don't draw items in boxes
-		if (gChip[i]->mBox != 0)
-			continue;
+        // Don't draw items in boxes
+        if (gChip[i]->mBox != 0)
+            continue;
         // Render chips rotated with opengl matrices so that all texture stuff etc. works out automatically.
-        glPushMatrix();
-        glTranslatef(gChip[i]->mX + gChip[i]->mW / 2, gChip[i]->mY + gChip[i]->mH / 2, 0);
-        glRotatef(gChip[i]->mAngleIn90DegreeSteps * 90, 0, 0, 1);
-        glTranslatef(-(gChip[i]->mX + gChip[i]->mW / 2), -(gChip[i]->mY + gChip[i]->mH / 2), 0);
+        float OldTranslateX = TranslateX, OldTranslateY = TranslateY;
+        //TranslateX += gChip[i]->mX + gChip[i]->mW / 2;
+        //TranslateY += gChip[i]->mY + gChip[i]->mH / 2;
+//        glTranslatef(gChip[i]->mX + gChip[i]->mW / 2, gChip[i]->mY + gChip[i]->mH / 2, 0);
+//        glRotatef(gChip[i]->mAngleIn90DegreeSteps * 90, 0, 0, 1);
+//        glTranslatef(-(gChip[i]->mX + gChip[i]->mW / 2), -(gChip[i]->mY + gChip[i]->mH / 2), 0);
         if (gUIState.hotitem == CHIP_ID(0,i))
             drawrect(gChip[i]->mX-0.5,gChip[i]->mY-0.5,gChip[i]->mW+1,gChip[i]->mH+1,color_hotchip);
         else
@@ -1320,10 +1324,7 @@ static void draw_screen()
             
         gChip[i]->render(CHIP_ID(0, i));
 
-
-
-        int j;
-        for (j = 0; j < (signed)gChip[i]->mPin.size(); j++)
+        for (int j = 0; j < (signed)gChip[i]->mPin.size(); j++)
         {
             if (gUIState.hotitem == CHIP_ID(j+1,i))
             {
@@ -1354,6 +1355,7 @@ static void draw_screen()
                 }
             }
         }
+        TranslateX = OldTranslateX, TranslateY = OldTranslateY;
         glPopMatrix();
     }
 

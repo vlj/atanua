@@ -190,6 +190,8 @@ enum keystates
 extern MersenneTwister gVisualRand, gPhysicsRand;
 extern int gScreenWidth, gScreenHeight;
 extern SDL_Surface *ScreenSurface;
+extern float TranslateX, TranslateY;
+extern float ScaleX, ScaleY;
 
 void initvideo(const class AtanuaConfig& gConfig);
 void set2d();
