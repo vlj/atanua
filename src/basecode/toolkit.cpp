@@ -357,32 +357,15 @@ void drawrect(float x, float y, float w, float h, int color)
   SDL_FillRect(ScreenSurface, &dst, color);
 }
 
-// For some reason using const SDL_Surface * triggers a link error
-void drawtexturedrect(const SDL_Surface *, float x, float y, float w, float h, int color)
+// Note : color is currently ignored
+void drawtexturedrect(const SDL_Surface *surface, float x, float y, float w, float h, int color)
 {
   SDL_Rect dst;
   dst.x = x;
   dst.y = y;
   dst.w = w;
   dst.h = h;
-  SDL_FillRect(ScreenSurface, &dst, color);
-/*    glBindTexture(GL_TEXTURE_2D, tex);
-    glEnable(GL_TEXTURE_2D);
-    glColor4f(((color >> 16) & 0xff) / 256.0f,
-              ((color >> 8) & 0xff) / 256.0f,
-              ((color >> 0) & 0xff) / 256.0f,
-              ((color >> 24) & 0xff) / 256.0f);
-    glBegin(GL_TRIANGLE_STRIP);
-      glTexCoord2f(0,0);
-      glVertex2f(x,y);
-      glTexCoord2f(0,1);
-      glVertex2f(x,y+h);
-      glTexCoord2f(1,0);
-      glVertex2f(x+w,y);
-      glTexCoord2f(1,1);
-      glVertex2f(x+w,y+h);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);*/
+  SDL_BlitSurface(const_cast<SDL_Surface *>(surface), 0, ScreenSurface, &dst);
 }
 
 void quickfont_drawchar(int ch, float x, float y, float w, float h)
