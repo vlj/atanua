@@ -63,7 +63,8 @@ ACFontInfoBlock::ACFontInfoBlock()
 
 void ACFontCommonBlock::load(File * f)
 {
-    //int blockSize = f->readint() - 4;
+  // Need to advance file reading
+    (void) f->readint();
     lineHeight = f->readword();
     base = f->readword();
     scaleW = f->readword();
