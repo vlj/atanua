@@ -23,6 +23,7 @@ distribution.
 #include <math.h>
 #include "toolkit.h"
 #include "atanua.h"
+#include <SDL/SDL_rotozoom.h>
 
 #ifdef USE_BASIC_POPUPS
 Popup popup[MAX_POPUPS];
@@ -367,7 +368,12 @@ void drawtexturedrect(const SDL_Surface *surface, float x, float y, float w, flo
   dst.y = y * ScaleY + TranslateY;
   dst.w = w * ScaleX;
   dst.h = h * ScaleY;
-  SDL_BlitSurface(const_cast<SDL_Surface *>(surface), 0, ScreenSurface, &dst);
+  SDL_Surface *ScaledSurface = zoomSurface(const_cast<SDL_Surface *>(surface),
+                                           w * ScaleX / surface->w,
+                                           h * ScaleY / surface->h,
+                                           0);
+  SDL_BlitSurface(ScaledSurface, 0, ScreenSurface, &dst);
+  delete ScaledSurface;
 }
 
 void quickfont_drawchar(int ch, float x, float y, float w, float h)

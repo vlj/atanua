@@ -1219,6 +1219,8 @@ static void draw_screen()
     glPushMatrix();
     TranslateX = gConfig.mToolkitWidth + gZoomFactor * gWorldOfsX;
     TranslateY = 40 + gZoomFactor * gWorldOfsY;
+    ScaleX = gZoomFactor;
+    ScaleY = gZoomFactor;
 
     // Draw grid
     for (i = 0; i < 20; i++)
@@ -1308,8 +1310,8 @@ static void draw_screen()
             continue;
         // Render chips rotated with opengl matrices so that all texture stuff etc. works out automatically.
         float OldTranslateX = TranslateX, OldTranslateY = TranslateY;
-        //TranslateX += gChip[i]->mX + gChip[i]->mW / 2;
-        //TranslateY += gChip[i]->mY + gChip[i]->mH / 2;
+        TranslateX += gChip[i]->mX + gChip[i]->mW / 2;
+        TranslateY += gChip[i]->mY + gChip[i]->mH / 2;
 //        glTranslatef(gChip[i]->mX + gChip[i]->mW / 2, gChip[i]->mY + gChip[i]->mH / 2, 0);
 //        glRotatef(gChip[i]->mAngleIn90DegreeSteps * 90, 0, 0, 1);
 //        glTranslatef(-(gChip[i]->mX + gChip[i]->mW / 2), -(gChip[i]->mY + gChip[i]->mH / 2), 0);
