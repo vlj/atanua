@@ -25,7 +25,6 @@ distribution.
 #include "atanua.h"
 #include "toolkit.h"
 #include "fileutils.h"
-#include <cassert>
 
 void ACFontInfoBlock::load(File * f)
 {
@@ -296,7 +295,6 @@ void ACFont::drawstring(const char * string, float x, float y, int color, float 
         return;
 
     float xofs, yofs;
-    assert(0 && "unimplemented");
 /*    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, pages.glhandle[0]);
     if (gConfig.mUseBlending)
@@ -311,220 +309,7 @@ void ACFont::drawstring(const char * string, float x, float y, int color, float 
         glColor4f(1,1,1,1);
     }*/
 
-
-    if (!gConfig.mUseOldFontSystem)
     {
-        ACCachedString *str = NULL;
-        ACCachedString *lru = NULL;
-        ACCachedString *prev = NULL;
-        ACCachedString *walker = mCacheRoot;
-
-        while (walker != NULL && str == NULL)
-        {
-            if (walker->mHash == h && 
-                walker->mHt == scalefactor && 
-                strcmp(walker->mString, string) == 0)
-            {
-                str = walker;
-            }
-            prev = lru;
-            lru = walker;
-            walker = walker->mNext;
-        }
-
-        if (str == NULL && mFontCacheEntries < gConfig.mFontCacheMax)
-        {
-            if (mCacheRoot)
-            {
-                prev = lru;
-                lru = new ACCachedString;
-                prev->mNext = lru;
-            }
-            else
-            {
-                mCacheRoot = lru = new ACCachedString;
-            }
-            mFontCacheEntries++;
-        }
-
-        if (str == NULL)
-        {
-            int p = 0;
-            mFontCacheTrashed++;
-
-            if (mMRUMode == 0)
-            {
-                if (prev != NULL)
-                {
-                    prev->mNext = prev->mNext->mNext;
-                    lru->mNext = mCacheRoot;
-                    mCacheRoot = lru;
-                }
-            }
-            else
-            {
-                mMRUMode--;
-                lru = mCacheRoot;
-            }
-
-            delete[] lru->mCoords;
-            delete[] lru->mTexcoords;
-            delete[] lru->mString;
-
-            if (gConfig.mUseVBOs && GLEE_ARB_vertex_buffer_object)
-            {
-                glDeleteBuffers(1, &lru->mVvbo);
-                glDeleteBuffers(1, &lru->mTvbo);
-            }
-
-            lru->mCount = len * 8 - 2;
-            lru->mCoords = new float[lru->mCount * 2];
-            lru->mTexcoords = new float[lru->mCount * 2];
-            lru->mHash = h;
-            lru->mString = mystrdup(string);
-            lru->mHt = scalefactor;
-
-            xofs = 0;
-            yofs = 0;
-            int lastid = 0;
-            while (*string)
-            {
-
-                xofs += findkern(lastid, *string) * scalefactor;
-                lastid = *string;
-                if (*string == '\n')
-                {
-                    xofs = 0;
-                    yofs += common.lineHeight * scalefactor;					
-                }
-                else
-                {
-                    ACFontCharBlock *curr = findcharblock(*string);
-                    if (curr->page != currentpage)
-                    {
-                        currentpage = curr->page;
-//                        glBindTexture(GL_TEXTURE_2D, pages.glhandle[currentpage]);
-                    }
-
-                    lru->mTexcoords[p] = curr->x / (float)common.scaleW;
-                    lru->mCoords[p] = xofs + curr->xoffset * scalefactor;
-                    if (p)
-                    {
-                        p++;
-                        lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                        lru->mCoords[p] = lru->mCoords[p-2];
-                        p++;
-                        lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                        lru->mCoords[p] = lru->mCoords[p-2];
-
-                        p++;
-                        lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                        lru->mCoords[p] = lru->mCoords[p-2];
-                        p++;
-                        lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                        lru->mCoords[p] = lru->mCoords[p-2];
-                    }
-                    p++;
-                    lru->mTexcoords[p] = curr->y / (float)common.scaleH;
-                    lru->mCoords[p] = yofs + curr->yoffset * scalefactor;
-                    p++;
-                    lru->mTexcoords[p] = curr->x / (float)common.scaleW;
-                    lru->mCoords[p] = xofs + curr->xoffset * scalefactor;
-                    p++;
-                    lru->mTexcoords[p] = (curr->y + curr->height) / (float)common.scaleH;
-                    lru->mCoords[p] = yofs + (curr->yoffset + curr->height) * scalefactor;
-                    p++;
-                    lru->mTexcoords[p] = (curr->x + curr->width) / (float)common.scaleW;
-                    lru->mCoords[p] = xofs + (curr->xoffset + curr->width) * scalefactor;
-                    p++;
-                    lru->mTexcoords[p] = curr->y / (float)common.scaleH;
-                    lru->mCoords[p] = yofs + curr->yoffset * scalefactor;
-                    p++;
-                    lru->mTexcoords[p] = (curr->x + curr->width) / (float)common.scaleW;
-                    lru->mCoords[p] = xofs + (curr->xoffset + curr->width) * scalefactor;
-                    p++;
-                    lru->mTexcoords[p] = (curr->y + curr->height) / (float)common.scaleH;
-                    lru->mCoords[p] = yofs + (curr->yoffset + curr->height) * scalefactor;
-                    p++;
-
-                    lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                    lru->mCoords[p] = lru->mCoords[p-2];
-                    p++;
-                    lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                    lru->mCoords[p] = lru->mCoords[p-2];
-                    p++;
-
-                    lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                    lru->mCoords[p] = lru->mCoords[p-2];
-                    p++;
-                    lru->mTexcoords[p] = lru->mTexcoords[p-2];
-                    lru->mCoords[p] = lru->mCoords[p-2];
-                    p++;
-
-                    xofs += curr->xadvance * scalefactor;
-                }
-                string++;
-            }
-            str = lru;
-
-            if (gConfig.mUseVBOs && GLEE_ARB_vertex_buffer_object)
-            {                  
-                glGenBuffers(1, &lru->mVvbo);   
-                glBindBuffer(GL_ARRAY_BUFFER, lru->mVvbo);
-                glBufferData(GL_ARRAY_BUFFER, p * sizeof(float), lru->mCoords, GL_STATIC_DRAW);
-                delete[] lru->mCoords;
-                lru->mCoords = NULL;
-                glGenBuffers(1, &lru->mTvbo);   
-                glBindBuffer(GL_ARRAY_BUFFER, lru->mTvbo);
-                glBufferData(GL_ARRAY_BUFFER, p * sizeof(float), lru->mTexcoords, GL_STATIC_DRAW);
-                delete[] lru->mTexcoords;
-                lru->mTexcoords = NULL;
-            }
-        }
-        else
-        {
-            if (str != mCacheRoot)
-            {
-                prev->mNext = prev->mNext->mNext;
-                str->mNext = mCacheRoot;
-                mCacheRoot = str;
-            }
-        }
-
-        mFontCacheUse++;
-
-        glPushMatrix();
-        glTranslatef(x,y,0);
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        if (gConfig.mUseVBOs && GLEE_ARB_vertex_buffer_object)
-        {
-            glBindBuffer(GL_ARRAY_BUFFER, str->mVvbo);
-            glVertexPointer(2, GL_FLOAT, 0, 0);
-            glBindBuffer(GL_ARRAY_BUFFER, str->mTvbo);
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-
-            glDrawArrays(GL_TRIANGLE_STRIP,0,str->mCount);
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
-        else
-        {
-            glVertexPointer(2, GL_FLOAT, 0, str->mCoords);
-            glTexCoordPointer(2, GL_FLOAT, 0, str->mTexcoords);
-
-            glDrawArrays(GL_TRIANGLE_STRIP,0,str->mCount);
-        }
-
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        glPopMatrix();
-    }
-    else
-    {
-        // fallback old glbegin/glend system
         xofs = x;
         yofs = y;
         int lastid = 0;
@@ -547,26 +332,22 @@ void ACFont::drawstring(const char * string, float x, float y, int color, float 
 //                    glBindTexture(GL_TEXTURE_2D, pages.glhandle[currentpage]);
                 }
 
-                glBegin(GL_TRIANGLE_STRIP);
-                glTexCoord2f(curr->x / (float)common.scaleW, curr->y / (float)common.scaleH);
-                glVertex2f(xofs + curr->xoffset * scalefactor, yofs + curr->yoffset * scalefactor);
-
-                glTexCoord2f(curr->x / (float)common.scaleW, (curr->y + curr->height) / (float)common.scaleH);
-                glVertex2f(xofs + curr->xoffset * scalefactor, yofs + (curr->yoffset + curr->height) * scalefactor);
-
-                glTexCoord2f((curr->x + curr->width) / (float)common.scaleW, curr->y / (float)common.scaleH);
-                glVertex2f(xofs + (curr->xoffset + curr->width) * scalefactor, yofs + curr->yoffset * scalefactor);
-
-                glTexCoord2f((curr->x + curr->width) / (float)common.scaleW, (curr->y + curr->height) / (float)common.scaleH);
-                glVertex2f(xofs + (curr->xoffset + curr->width) * scalefactor, yofs + (curr->yoffset + curr->height) * scalefactor);
-                glEnd();
+                SDL_Rect src, dst;
+                src.x = curr->x;// / (float)common.scaleW;
+                src.y = curr->y;// / (float)common.scaleH;
+                src.w = curr->width;// / (float)common.scaleW;
+                src.h = curr->height;// / (float)common.scaleH;
+                dst.x = xofs + curr->xoffset * scalefactor + TranslateX;
+                dst.y = yofs + curr->yoffset * scalefactor + TranslateY;
+                dst.w = curr->width * scalefactor;
+                dst.h = curr->height * scalefactor;
+                SDL_BlitSurface(pages.glhandle[currentpage], &src, ScreenSurface, &dst);
 
                 xofs += curr->xadvance * scalefactor;
             }
             string++;
         }
     }
-    glDisable(GL_TEXTURE_2D);
 }
 
 void ACFont::fontcacheframe()
